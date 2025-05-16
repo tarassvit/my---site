@@ -1,35 +1,24 @@
-
-const canvas = document.getElementById("globe-canvas");
+// Простий обертальний ефект для демонстрації
+const canvas = document.getElementById("globe");
 const ctx = canvas.getContext("2d");
-const tooltip = document.getElementById("tooltip");
 
-let width, height;
-function resizeCanvas() {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+canvas.width = window.innerWidth * 0.8;
+canvas.height = window.innerHeight * 0.6;
 
-// Простий фоновий глобус-плейсхолдер
+let angle = 0;
 function drawGlobe() {
-  ctx.clearRect(0, 0, width, height);
-  const radius = Math.min(width, height) / 3;
-  ctx.beginPath();
-  ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
-  ctx.fillStyle = "#440088";
-  ctx.fill();
-  ctx.strokeStyle = "#8855ff";
-  ctx.stroke();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.arc(0, 0, 100, 0, 2 * Math.PI);
+    ctx.fillStyle = "#4b8bbe";
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.stroke();
+    ctx.restore();
+    angle += 0.01;
+    requestAnimationFrame(drawGlobe);
 }
 drawGlobe();
-
-canvas.addEventListener("mousemove", (e) => {
-  tooltip.classList.remove("hidden");
-  tooltip.style.top = e.clientY + 10 + "px";
-  tooltip.style.left = e.clientX + 10 + "px";
-});
-
-canvas.addEventListener("mouseleave", () => {
-  tooltip.classList.add("hidden");
-});
