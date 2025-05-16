@@ -1,0 +1,76 @@
+ <!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terra Touch - Інтерактивний Глобус Емоцій</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: black;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const textureLoader = new THREE.TextureLoader();
+const earthTexture = textureLoader.load('https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg');
+
+const geometry = new THREE.SphereGeometry(2, 64, 64);
+const material = new THREE.MeshBasicMaterial({ map: earthTexture });
+const globe = new THREE.Mesh(geometry, material);
+scene.add(globe);
+
+camera.position.z = 5;
+
+function animate() {
+  requestAnimationFrame(animate);
+  globe.rotation.y += 0.001;
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+let isDragging = false;
+let previousMousePosition = { x: 0, y: 0 };
+
+renderer.domElement.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  previousMousePosition = { x: e.clientX, y: e.clientY };
+});
+
+renderer.domElement.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+
+renderer.domElement.addEventListener('mousemove', (e) => {
+  if (isDragging) {
+    const deltaX = e.clientX - previousMousePosition.x;
+    globe.rotation.y += deltaX * 0.005;
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+  }
+});
+
+  </script>
+</body>
+</html>
